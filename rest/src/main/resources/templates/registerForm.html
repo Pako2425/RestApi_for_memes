@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<form>
-    <label for="email">Email:</label><br>
-    <input type="text" placeholder="Enter email" name="email" id="email"><br>
+<html xmlns:th="https://www.thymeleaf.org">
 
-    <label for="nickName">Nickname:</label><br>
-    <input type="text" placeholder="Enter nickname" name=nickname id="nickname"><br>
+<body>
+    <form action="#" th:action="@{/process_register}" th:object="${user}" method="post">
+        <label for="email">Email:</label><br>
+        <input type="text" placeholder="Enter email" name="email" id="email"><br>
 
-    <label for="password">Password:</label><br>
-    <input type="text" placeholder="Enter password" name="password" id="password"><br>
+        <label for="name">Name:</label><br>
+        <input type="text" placeholder="Enter name" name=name id="name"><br>
 
-    <label for="repeatPassword">Repeat Password:</label><br>
-    <input type="text" placeholder="Repeat password" name="repeatPassword" id="repeatPassword"><br>
+        <label for="password">Password:</label><br>
+        <input type="text" placeholder="Enter password" name="password" id="password"><br>
 
-    <input type="checkbox" id="termsAndConditions">
-    <label for="termsAndConditions">I accept <a href="/terms_and_conditions" target="_blank">Terms & Conditions</a></label><br>
+        <label for="repeatPassword">Repeat Password:</label><br>
+        <input type="text" placeholder="Repeat password" name="repeatPassword" id="repeatPassword"><br>
 
-    <input type="submit" value="              Register              "><br>
+        <input type="checkbox" id="termsAndConditions">
+        <label for="termsAndConditions">I accept <a href="/terms_and_conditions" target="_blank">Terms & Conditions</a></label><br>
 
-    <label>Already have and account? <a href="sign_in">Sign in</a></label>
-</form>
+        <input type="submit" value="              Register              "><br>
+
+        <label>Already have and account? <a href="sign_in">Sign in</a></label>
+    </form>
+</body>
 </html>
