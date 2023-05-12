@@ -62,21 +62,6 @@ public class ApiController {
         return meme;
     }
 
-    @PostMapping(value = "/process_register")
-    public String handleRegisterData(@ModelAttribute(value="userRegisterFormData")
-                                         UserRegisterFormData userRegisterFormData) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(userRegisterFormData.getPassword());
-
-        User user = new User();
-        user.setPassword(encodedPassword);
-        user.setEmail(userRegisterFormData.getEmail());
-        user.setName(userRegisterFormData.getName());
-        usersRepository.save(user);
-
-        return "registerSuceeded";
-    }
-
     public boolean isEmailAlreadyInUse(String email) {
         boolean emailUsed = false;
         for(User user : usersRepository.findAll()) {
@@ -86,6 +71,34 @@ public class ApiController {
         }
         return emailUsed;
     }
+
+    public String encodePassword(String password) {
+
+        return "";
+    }
+
+    @PostMapping(value = "/process_register")
+    public String handleRegisterData(@ModelAttribute(value="userRegisterFormData")
+                                         UserRegisterFormData userRegisterFormData) {
+
+        if(isEmailAlreadyInUse(userRegisterFormData.getEmail())) {
+            return "registerForm";
+        }
+        else {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(userRegisterFormData.getPassword());
+
+            User user = new User();
+            user.setPassword(encodedPassword);
+            user.setEmail(userRegisterFormData.getEmail());
+            user.setName(userRegisterFormData.getName());
+            usersRepository.save(user);
+
+            return "registerSuceeded";
+        }
+    }
+
+
 
     /*@PostMapping(value = "/fileSystem")
     public Long uploadImage(@RequestParam MultipartFile multipartFile) throws IOException {
