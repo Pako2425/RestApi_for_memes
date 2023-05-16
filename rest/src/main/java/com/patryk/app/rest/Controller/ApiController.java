@@ -7,6 +7,7 @@ import com.patryk.app.rest.Repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.patryk.app.rest.Model.FileData;
@@ -21,7 +22,7 @@ import java.util.Optional;
 
 @Controller
 public class ApiController {
-
+    
     @Autowired
     FilesRepository filesRepository;
 
@@ -32,7 +33,6 @@ public class ApiController {
 
     @GetMapping(value = "/")
     public String viewHomePage() {
-        System.out.println("Welcome on home page :)");
         return "homePage";
     }
 
@@ -62,29 +62,41 @@ public class ApiController {
         return meme;
     }
 
-    public boolean isEmailAlreadyInUse(String email) {
-        boolean emailUsed = false;
-        for(User user : usersRepository.findAll()) {
-            if (user.getEmail().equals(email)) {
-                emailUsed = true;
-            }
-        }
-        return emailUsed;
-    }
-
     public String encodePassword(String password) {
 
         return "";
+    }
+
+    public boolean isRegisterDataCorrect(UserRegisterFormData userRegisterFormData) {
+        boolean isEmailAlreadyInUse = false;
+        boolean isNameAlreadyInUse = false;
+        boolean isPasswordCorrect = false;
+
+        for(User user : usersRepository.findAll()) {
+            if (user.getEmail().equals(userRegisterFormData.getEmail())) {
+                isEmailAlreadyInUse = true;
+            }
+            if (user.getName().equals(userRegisterFormData.getName())) {
+                isNameAlreadyInUse = true;
+            }
+            if (userRegisterFormData.getPassword().equals(userRegisterFormData.getRepeatPassword())) {
+                isPasswordCorrect = true;
+            }
+        }
+
+        if(!isEmailAlreadyInUse && !isNameAlreadyInUse && isPasswordCorrect) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @PostMapping(value = "/process_register")
     public String handleRegisterData(@ModelAttribute(value="userRegisterFormData")
                                          UserRegisterFormData userRegisterFormData) {
 
-        if(isEmailAlreadyInUse(userRegisterFormData.getEmail())) {
-            return "registerForm";
-        }
-        else {
+        if(isRegisterDataCorrect(userRegisterFormData)) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String encodedPassword = passwordEncoder.encode(userRegisterFormData.getPassword());
 
@@ -95,6 +107,9 @@ public class ApiController {
             usersRepository.save(user);
 
             return "registerSuceeded";
+        }
+        else {
+            return "registerForm";
         }
     }
 
