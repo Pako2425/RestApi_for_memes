@@ -2,6 +2,7 @@ package com.patryk.app.rest;
 
 import com.patryk.app.rest.Model.User;
 import com.patryk.app.rest.Model.UserRegisterFormData;
+import com.patryk.app.rest.Model.UserRole;
 import com.patryk.app.rest.Repository.UsersRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
@@ -26,8 +27,8 @@ class RestApplicationTests {
 	@Autowired
 	EntityManager entityManager;
 
-	@Autowired
-	private MockMvc mockMvc;
+	//@Autowired
+	//private MockMvc mockMvc;
 
 	@Test
 	void contextLoads() {
@@ -35,17 +36,12 @@ class RestApplicationTests {
 
 	@Test
 	void createNewUserTest() {
-
-		User user = new User();
-		user.setEmail("patkoc11@interia.pl");
-		user.setName("Pako2425");
-		user.setPassword("gitara321");
-
+		User user = new User("name", "email", "password", UserRole.USER);
 		User savedUser = repo.save(user);
 		User foundUser = entityManager.find(User.class, savedUser.getId());
 		Assertions.assertEquals(savedUser.getEmail(), foundUser.getEmail());
 	}
-
+	/*
 	@Test
 	void registerUserTest() {
 		User user = new User();
@@ -60,5 +56,7 @@ class RestApplicationTests {
 		userRegisterFormData.setRepeatPassword("aaa");
 
 		mockMvc.perform()
-	}
+
+	 */
+
 }

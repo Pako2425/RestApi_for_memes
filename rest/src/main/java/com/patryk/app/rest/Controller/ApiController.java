@@ -2,8 +2,12 @@ package com.patryk.app.rest.Controller;
 
 import com.patryk.app.rest.Model.User;
 import com.patryk.app.rest.Model.UserRegisterFormData;
+import com.patryk.app.rest.Model.UserRole;
 import com.patryk.app.rest.Repository.FilesRepository;
 import com.patryk.app.rest.Repository.UsersRepository;
+import com.patryk.app.rest.Service.RegisterRequest;
+import com.patryk.app.rest.Service.RegisterService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,14 +25,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@AllArgsConstructor
 public class ApiController {
     
-    @Autowired
-    FilesRepository filesRepository;
-
-    @Autowired
-    UsersRepository usersRepository;
-
+    private final FilesRepository filesRepository;
+    private final UsersRepository usersRepository;
+    private final RegisterService registerService;
     private final String FOLDER_PATH = "C:/Users/Lenovo/Desktop/files/";
 
     @GetMapping(value = "/")
@@ -76,7 +78,7 @@ public class ApiController {
             if (user.getEmail().equals(userRegisterFormData.getEmail())) {
                 isEmailAlreadyInUse = true;
             }
-            if (user.getName().equals(userRegisterFormData.getName())) {
+            if (user.getUsername().equals(userRegisterFormData.getName())) {
                 isNameAlreadyInUse = true;
             }
             if (userRegisterFormData.getPassword().equals(userRegisterFormData.getRepeatPassword())) {
@@ -93,6 +95,12 @@ public class ApiController {
     }
 
     @PostMapping(value = "/process_register")
+    public String register(@RequestBody RegisterRequest registerRequest) {
+        registerService.register(registerRequest);
+        return "register succesful";
+    }
+
+    @PostMapping(value = "/process_register")
     public String handleRegisterData(@ModelAttribute(value="userRegisterFormData")
                                          UserRegisterFormData userRegisterFormData) {
 
@@ -100,10 +108,7 @@ public class ApiController {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String encodedPassword = passwordEncoder.encode(userRegisterFormData.getPassword());
 
-            User user = new User();
-            user.setPassword(encodedPassword);
-            user.setEmail(userRegisterFormData.getEmail());
-            user.setName(userRegisterFormData.getName());
+            User user = new User(userRegisterFormData.getName(), userRegisterFormData.getEmail(), encodedPassword, UserRole.USER);
             usersRepository.save(user);
 
             return "registerSuceeded";
